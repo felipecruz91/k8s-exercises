@@ -1,4 +1,4 @@
-# Exercise 1.1
+# Exercise 1.0
 
 In this exercise, you will practice the creation of a new Pod in a namespace. Once created, you will inspect it, shell into it and run some operations inside of the container.
 
