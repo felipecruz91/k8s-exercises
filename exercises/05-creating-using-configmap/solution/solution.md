@@ -65,7 +65,8 @@ Changes to environment variables are only reflected if the Pod is restarted. Alt
 ## Configuring a Pod to Use a ConfigMap via mounting a volume
 
 ```yaml
-apiVersion: v1kind: Pod
+apiVersion: v1
+kind: Pod
 metadata:  
   creationTimestamp: null
   labels:    
