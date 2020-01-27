@@ -65,7 +65,14 @@ Changes to environment variables are only reflected if the Pod is restarted. Alt
 ## Configuring a Pod to Use a ConfigMap via mounting a volume
 
 ```yaml
-apiVersion: v1kind: Podmetadata:  creationTimestamp: null  labels:    run: backend  name: backendspec:  containers:
+apiVersion: v1kind: Pod
+metadata:  
+  creationTimestamp: null
+  labels:    
+    run: backend 
+    name: backend
+spec:
+  containers:
   - image: nginx
     name: backend
     volumeMounts:
