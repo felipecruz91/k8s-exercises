@@ -1,5 +1,7 @@
 # Solution
 
+## Configuring a Pod to Use a ConfigMap via ENV variables
+
 Create the environment variables in the text file.
 
 ```shell
@@ -59,3 +61,43 @@ DB_USERNAME=postgres
 > How would you approach hot reloading of values defined by a ConfigMap consumed by an application running in Pod?
 
 Changes to environment variables are only reflected if the Pod is restarted. Alternatively, you can mount a ConfigMap as file and poll changes from the mounted file periodically, however, it requires the application to build in the logic.
+
+## Configuring a Pod to Use a ConfigMap via mounting a volume
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:  
+  creationTimestamp: null
+  labels:    
+    run: backend 
+    name: backend
+spec:
+  containers:
+  - image: nginx
+    name: backend
+    volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config
+    resources: {}
+  volumes:
+    - name: config-volume
+      configMap:
+        name: db-config
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+```
+
+Create the Pod by pointing the `create` command to the YAML file.
+
+```shell
+$ kubectl create -f pod.yaml
+```
+
+List the files under the `/etc/config` directory of the container filesystem:
+
+```shell
+$ kubectl exec -it backend -- ls /etc/config
+DB_URL  DB_USERNAME
+```

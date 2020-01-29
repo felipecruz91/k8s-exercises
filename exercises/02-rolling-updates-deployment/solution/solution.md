@@ -44,16 +44,16 @@ nginx   3         3         3            1           4s
 Set the new image and check the revision history.
 
 ```shell
-$ kubectl set image deployment/nginx nginx=nginx:latest
+$ kubectl set image deployment nginx nginx=nginx:latest
 deployment.extensions/nginx image updated
 
-$ kubectl rollout history nginx
+$ kubectl rollout history deployment nginx
 deployment.extensions/nginx
 REVISION  CHANGE-CAUSE
 1         <none>
 2         <none>
 
-$ kubectl rollout history nginx --revision=2
+$ kubectl rollout history deployment nginx --revision=2
 deployment.extensions/nginx with revision #2
 Pod Template:
   Labels:	app=v1
@@ -78,16 +78,16 @@ deployment.extensions/nginx scaled
 Roll back to revision 1. You will see the new revision. Inspecting the revision should show the image `nginx`.
 
 ```shell
-$ kubectl rollout undo deployment/nginx --to-revision=1
+$ kubectl rollout undo deployment nginx --to-revision=1
 deployment.extensions/nginx
 
-$ kubectl rollout history nginx
+$ kubectl rollout history deployment nginx
 deployment.extensions/nginx
 REVISION  CHANGE-CAUSE
 2         <none>
 3         <none>
 
-$ kubectl rollout history nginx --revision=3
+$ kubectl rollout history deployment nginx --revision=3
 deployment.extensions/nginx with revision #3
 Pod Template:
   Labels:	app=v1
