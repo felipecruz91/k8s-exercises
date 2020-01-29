@@ -10,7 +10,7 @@ console.log(`Starting HTTP server on port ${port}`);
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World\n');
+  res.end(`Hello World from pod ${process.env.POD_NAME}\n`);
 });
 
 server.listen(port, () => {
