@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: hello
+  name: hello
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: hello
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: hello
+    spec:
+      containers:
+      - image: felipecruz/nodejs-hello-world:1.0.0
+        name: hello
+        ports:
+        - name: nodejs-port
+          containerPort: 3000
+        readinessProbe:
+          httpGet:
+            path: /
+            port: nodejs-port
+          initialDelaySeconds: 45
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name        
+        resources: {}
+status: {}
