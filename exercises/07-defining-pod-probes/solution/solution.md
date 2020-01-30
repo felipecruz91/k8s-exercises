@@ -52,20 +52,3 @@ spec:
   restartPolicy: Never
 status: {}
 ```
-
-Create the Pod from the YAML file, find out the Pod IP address and in a new terminal window execute the `curl` command every second:
-
-```shell
-$ kubectl create -f pod.yaml
-pod/hello created
-$ while true; do curl http://<POD_IP_ADDRESS>:3000/; sleep 1; done
-
-curl: (7) Failed to connect to 10.1.1.63 port 3000: Connection refused
-curl: (7) Failed to connect to 10.1.1.63 port 3000: Connection refused
-curl: (7) Failed to connect to 10.1.1.63 port 3000: Connection refused
-curl: (7) Failed to connect to 10.1.1.63 port 3000: Connection refused
-(After ~45 seconds the NodeJS web server will start serving requests)
-Hello World
-Hello World
-Hello World
-Hello World
