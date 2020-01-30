@@ -9,7 +9,7 @@ $ microk8s.enable registry
 Upload your image to the local registry that Microk8s has running:
 
 ```shell
-$ docker tag webapp:optimized localhost:32000/nodejs-hello-world:1.0.0
+$ docker tag nodejs-hello-world:1.0.0 localhost:32000/nodejs-hello-world:1.0.0
 $ docker push localhost:32000/nodejs-hello-world:1.0.0
 ```
 
