@@ -10,7 +10,7 @@ Storage Classes allow a k8s administrator to categorize storage resources, e.g. 
 
 The following `demo-storageclass.yml` file will create a storage class with name demo, using the `microk8s.io/hostpath` storage provisioner.
 
-```shell
+```yaml
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -31,7 +31,7 @@ Pods obtain access to storage via Volumes, which in-turn can be dynamically crea
 
 This `demo-persistent-volume-claim.yml` file creates a persistent volume claim named demo-volume-claim. This claim will request 500 megabytes of storage space from the StorageClass named demo that we created in the previous step.
 
-```shell
+```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -59,7 +59,7 @@ Now that the persistent volume claim has been created, we can create a pod that 
 ## Create a pod
 This `demo-pod.yml` file creates a pod that runs the sleep command. The persistent-volume-claim demo-volume-claim provides a volume that is mounted at /tmp/test
 
-```shell
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
