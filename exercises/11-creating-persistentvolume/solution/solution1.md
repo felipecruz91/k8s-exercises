@@ -14,7 +14,7 @@ spec:
     - ReadWriteMany
   storageClassName: shared
   hostPath:
-    path: /data/config
+    path: /tmp/config
 ```
 
 You will see that the Persistent Volume has been created but and is available to be claimed.
