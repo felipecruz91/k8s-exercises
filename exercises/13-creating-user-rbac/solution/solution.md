@@ -153,7 +153,7 @@ Subjects:
 Now you should be able to execute the following commands without any issues:
 
 ```shell
-$ kubectl --context=employee-context run --image bitnami/dokuwiki mydokuwiki
+$ kubectl --context=employee-context run nginx --image=nginx
 
 $ kubectl --context=employee-context get pods
 ```
