@@ -12,7 +12,7 @@ $ microk8s.enable metrics-server
 1. Create a Deployment named `my-deploy` with only 1 replica initially. The Pod should use the `polinux/stress` image and run the command `stress --cpu 1 --io 1 --vm 1 --vm-bytes 12M --timeout 20000s`. This will simulate a CPU consumption of 1 core in the Pod.
 Save the deployment configuration to the `my-deploy.yaml` file.
 
-2. Edit the `my-deploy.yaml` deploy yaml and set the Pod resource requests 100 millicores. Apply the configuration.
+2. Edit the `my-deploy.yaml` deploy yaml and set the Pod resource requests and limits to 100 millicores. Apply the configuration.
 
 3. List the Deployment and ensure that the correct number of replicas is running: 1 replica.
 
