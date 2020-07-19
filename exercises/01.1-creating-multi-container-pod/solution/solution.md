@@ -12,7 +12,7 @@ Create the Pod and the two Containers:
 $ kubectl -n ns2 apply -f two-container-pod.yaml
 ```
 
-Log into the nginx container
+Find the ip address of the running Pod:
 
 ```shell
 $ kubectl get pods -o wide
