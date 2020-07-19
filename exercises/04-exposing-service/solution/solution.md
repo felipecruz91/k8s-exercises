@@ -29,6 +29,8 @@ Determine the cluster IP and use it for the `wget` command.
 ```shell
 $ kubectl run tmp --image=busybox --restart=Never -it --rm -- wget -O- 10.108.88.208:80
 Connecting to 10.108.88.208:80 (10.108.88.208:80)
+```
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -76,6 +78,8 @@ Run a `wget` or `curl` command against the service using port `30441`. On Docker
 
 ```shell
 $ curl localhost:30441
+```
+```html
 <!DOCTYPE html>
 <html>
 <head>
