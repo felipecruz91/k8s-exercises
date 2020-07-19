@@ -11,7 +11,7 @@ The Volume in this exercise provides a way for Containers to communicate during 
 1. Create the namespace `ns2`.
 2. In the namespace `ns2` create a new Pod named `two-containers` with a first `nginx-container` container with the image `nginx`. Expose the port 80 and save the Pod configuration into a file named `two-containers-pod.yaml`
 3. Edit the file and add a new container to the Pod. The new container name is `debian-container` and uses the image `debian` and it will execute the following command:
- `echo Hello from the debian container > /pod-data/index.html`
+ `while true; do echo $(date) >> /pod-data/index.html; sleep 1; done;`
 
 4. Use a volume to share the `index.html` file.
 10. Delete the Pod and the namespace.
