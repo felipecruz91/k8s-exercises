@@ -8,13 +8,14 @@ $ microk8s.enable metrics-server
 Generate the YAML for a Deployment plus Pod for further editing.
 
 ```shell
-$ kubectl run my-deploy --image=polinux/stress --replicas=1 --dry-run -o yaml -- stress --cpu 1  --io 1 --vm 1 --vm-bytes 12M --timeout 20000s > my-deploy.yaml
+$ kubectl run my-deploy --image=polinux/stress --replicas=1 --requests=cpu="100m" --limits=cpu="100m" --dry-run -o yaml -- stress --cpu 1  --io 1 --vm 1 --vm-bytes 12M --timeout 20000s > my-deploy.yaml
 ```
 
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  creationTimestamp: null
   labels:
     run: my-deploy
   name: my-deploy
@@ -26,6 +27,7 @@ spec:
   strategy: {}
   template:
     metadata:
+      creationTimestamp: null
       labels:
         run: my-deploy
     spec:
@@ -43,11 +45,16 @@ spec:
         - --timeout
         - 20000s
         image: polinux/stress
-        name: my-deploy        
-        resources: {}
+        name: my-deploy
+        resources:
+          limits:
+            cpu: 100m
+          requests:
+            cpu: 100m
+status: {}
 ```
 
-Set the Pod resource requests to 100 millicores
+Verify the Pod resource requests and limits are set to 100 millicores
 
 ```yaml
 spec:
@@ -55,6 +62,8 @@ spec:
         image: polinux/stress
         name: my-deploy        
         resources:
+          limits:
+            cpu: 100m
           requests:
             cpu: 100m
 ```
