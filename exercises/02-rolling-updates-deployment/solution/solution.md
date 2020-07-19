@@ -3,6 +3,11 @@
 Generate the YAML for a Deployment plus Pod for further editing.
 
 ```shell
+$ kubectl run nginx --image=nginx --restart=Always --replicas=3 --port=80 --dry-run -o yaml > nginx.yaml
+```
+or
+
+```shell
 $ kubectl create deployment nginx --image=nginx --dry-run -o yaml > nginx.yaml
 ```
 
@@ -12,21 +17,27 @@ Edit the labels. The selector should match the labels of the Pods. Change the re
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
   name: nginx
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: v1
+      run: nginx
   strategy: {}
   template:
     metadata:
+      creationTimestamp: null
       labels:
-        app: v1
+        run: nginx
     spec:
       containers:
       - image: nginx
         name: nginx
+        ports:
+        - containerPort: 80
         resources: {}
 status: {}
 ```
@@ -52,26 +63,30 @@ deployment.extensions/nginx
 REVISION  CHANGE-CAUSE
 1         <none>
 2         <none>
+```
 
+Find details about revision #2
+
+```shell
 $ kubectl rollout history deployment nginx --revision=2
 deployment.extensions/nginx with revision #2
 Pod Template:
-  Labels:	app=v1
-	pod-template-hash=1370799740
+  Labels:       pod-template-hash=69578d4d9b
+        run=nginx
   Containers:
    nginx:
-    Image:	nginx:latest
-    Port:	<none>
-    Host Port:	<none>
-    Environment:	<none>
-    Mounts:	<none>
-  Volumes:	<none>
+    Image:      nginx:latest
+    Port:       80/TCP
+    Host Port:  0/TCP
+    Environment:        <none>
+    Mounts:     <none>
+  Volumes:      <none>
 ```
 
 Now scale the Deployment to 5 replicas.
 
 ```shell
-$ kubectl scale deployments nginx --replicas=5
+$ kubectl scale deployment nginx --replicas=5
 deployment.extensions/nginx scaled
 ```
 
