@@ -8,7 +8,7 @@ $ microk8s.enable metrics-server
 Generate the YAML for a Deployment plus Pod for further editing.
 
 ```shell
-$ kubectl run my-deploy --image=polinux/stress --replicas=1 --dry-run -o yaml -- stress --cpu 1  --io 1 --vm 1 --vm-bytes 12M --timeout 240s > my-deploy.yaml
+$ kubectl run my-deploy --image=polinux/stress --replicas=1 --dry-run -o yaml -- stress --cpu 1  --io 1 --vm 1 --vm-bytes 12M --timeout 360s > my-deploy.yaml
 ```
 
 ```yaml
@@ -41,7 +41,7 @@ spec:
         - --vm-bytes
         - 12M
         - --timeout
-        - 240s
+        - 360s
         image: polinux/stress
         name: my-deploy        
         resources: {}
