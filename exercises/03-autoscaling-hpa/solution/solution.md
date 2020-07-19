@@ -41,7 +41,7 @@ spec:
         - --vm-bytes
         - 12M
         - --timeout
-        - 360s
+        - 20000s
         image: polinux/stress
         name: my-deploy        
         resources: {}
