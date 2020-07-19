@@ -3,12 +3,12 @@
 Generate the YAML for a Deployment plus Pod for further editing.
 
 ```shell
-$ kubectl run nginx --image=nginx --restart=Always --replicas=3 --port=80 --dry-run -o yaml > nginx.yaml
+$ kubectl run nginx --image=nginx:1.17.9 --restart=Always --replicas=3 --port=80 --dry-run -o yaml > nginx.yaml
 ```
 or
 
 ```shell
-$ kubectl create deployment nginx --image=nginx --dry-run -o yaml > nginx.yaml
+$ kubectl create deployment nginx:1.17.9 --image=nginx --dry-run -o yaml > nginx.yaml
 ```
 
 Edit the labels. The selector should match the labels of the Pods. Change the replicas from 1 to 3.
@@ -34,7 +34,7 @@ spec:
         run: nginx
     spec:
       containers:
-      - image: nginx
+      - image: nginx:1.17.9
         name: nginx
         ports:
         - containerPort: 80
@@ -55,7 +55,7 @@ nginx   3         3         3            1           4s
 Set the new image and check the revision history.
 
 ```shell
-$ kubectl set image deployment nginx nginx=nginx:latest
+$ kubectl set image deployment nginx nginx=nginx:1.18
 deployment.extensions/nginx image updated
 
 $ kubectl rollout history deployment nginx
@@ -71,11 +71,11 @@ Find details about revision #2
 $ kubectl rollout history deployment nginx --revision=2
 deployment.extensions/nginx with revision #2
 Pod Template:
-  Labels:       pod-template-hash=69578d4d9b
+  Labels:       pod-template-hash=6d58f7664f
         run=nginx
   Containers:
    nginx:
-    Image:      nginx:latest
+    Image:      nginx:1.18
     Port:       80/TCP
     Host Port:  0/TCP
     Environment:        <none>
@@ -105,16 +105,16 @@ REVISION  CHANGE-CAUSE
 $ kubectl rollout history deployment nginx --revision=3
 deployment.extensions/nginx with revision #3
 Pod Template:
-  Labels:	app=v1
-	pod-template-hash=454670702
+  Labels:       pod-template-hash=6cdc894c7c
+        run=nginx
   Containers:
    nginx:
-    Image:	nginx
-    Port:	<none>
-    Host Port:	<none>
-    Environment:	<none>
-    Mounts:	<none>
-  Volumes:	<none>
+    Image:      nginx:1.17.9
+    Port:       80/TCP
+    Host Port:  0/TCP
+    Environment:        <none>
+    Mounts:     <none>
+  Volumes:      <none>
 ```
 
 ## Optional
