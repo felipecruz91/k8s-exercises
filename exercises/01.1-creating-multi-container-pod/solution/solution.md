@@ -15,13 +15,19 @@ $ kubectl -n ns2 apply -f two-container-pod.yaml
 Log into the nginx container
 
 ```shell
-$ kubectl -n ns2 exec -it two-containers -c nginx-container -- /bin/bash
+$ kubectl get pods -o wide
+NAME             READY   STATUS    RESTARTS   AGE     IP           NODE             NOMINATED NODE   READINESS GATES
+two-containers   2/2     Running   0          4m10s   10.1.62.10   microk8s-node1   <none>           <none>
+```
 
-root@two-containers:/# apt-get update
-root@two-containers:/# apt-get -y install curl
-root@two-containers:/# curl localhost
-Hello from the debian container
-root@two-containers:/# exit
+Visit the nginx web server:
+
+```shell
+$ curl 10.1.62.10:80
+Sun Jul 19 11:57:00 UTC 2020
+Sun Jul 19 11:57:01 UTC 2020
+Sun Jul 19 11:57:02 UTC 2020
+...
 ```
 
 Delete the Pod and namespace after you are done.
