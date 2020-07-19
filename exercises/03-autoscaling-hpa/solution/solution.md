@@ -107,3 +107,30 @@ Events:
   Normal  SuccessfulRescale  9s    horizontal-pod-autoscaler  New size: 6; reason: cpu resource utilization (percentage of request) above target
 ```
 
+Eventually, it will scale up to 6 replicas:
+
+```shell
+$ watch kubectl get all
+
+Every 2.0s: kubectl get all                                                                                                                                              microk8s-node1: Sun Jul 19 15:56:18 2020
+
+NAME                             READY   STATUS    RESTARTS   AGE
+pod/my-deploy-64f59795b4-464b9   1/1     Running   0          16m
+pod/my-deploy-64f59795b4-6bxxd   1/1     Running   0          13m
+pod/my-deploy-64f59795b4-86d6w   1/1     Running   0          11m
+pod/my-deploy-64f59795b4-nqrz2   1/1     Running   0          15m
+pod/my-deploy-64f59795b4-tgk92   1/1     Running   0          13m
+pod/my-deploy-64f59795b4-xktqz   1/1     Running   0          22m
+
+NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.152.183.1   <none>        443/TCP   114m
+
+NAME                        READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/my-deploy   6/6     6            6           22m
+
+NAME                                   DESIRED   CURRENT   READY   AGE
+replicaset.apps/my-deploy-64f59795b4   6         6         6       22m
+
+NAME                                            REFERENCE              TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/my-deploy   Deployment/my-deploy   99%/70%   1         6         6          17m
+```
