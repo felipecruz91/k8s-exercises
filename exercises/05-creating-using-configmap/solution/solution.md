@@ -13,10 +13,11 @@ Create the ConfigMap and point to the text file upon creation.
 ```shell
 $ kubectl create configmap db-config --from-env-file=config.txt
 configmap/db-config created
+
 $ kubectl run backend --image=nginx --restart=Never -o yaml --dry-run > pod.yaml
 ```
 
-The final YAML file should look similar to the following code snippet.
+Load the environment variables from the `db-config` ConfigMap in the `pod.yaml` file. The final YAML file should look similar to the following code snippet.
 
 ```yaml
 apiVersion: v1
