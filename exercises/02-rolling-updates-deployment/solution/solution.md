@@ -3,15 +3,15 @@
 Generate the YAML for a Deployment plus Pod for further editing.
 
 ```shell
-$ kubectl run nginx --image=nginx:1.17.9 --restart=Always --replicas=3 --port=80 --dry-run -o yaml > nginx.yaml
+$ kubectl run nginx-deployment --image=nginx:1.17.9 --restart=Always --replicas=3 --port=80 --dry-run -o yaml > nginx-deployment.yaml
 ```
 or
 
 ```shell
-$ kubectl create deployment nginx:1.17.9 --image=nginx --dry-run -o yaml > nginx.yaml
+$ kubectl create deployment nginx-deployment --image=nginx:1.17.9 --dry-run -o yaml > nginx-deployment.yaml
 ```
 
-Edit the labels. The selector should match the labels of the Pods. Change the replicas from 1 to 3.
+Verify the number of `replicas` of the deployment is set to `3` and set the container name to `nginx`.
 
 ```yaml
 apiVersion: apps/v1
@@ -42,79 +42,176 @@ spec:
 status: {}
 ```
 
-Create the deployment by pointing it to the YAML file.
+Create the deployment by using the YAML manifest.
 
 ```shell
-$ kubectl create -f nginx.yaml
-deployment.apps/nginx created
+$ kubectl apply -f nginx-deployment.yaml
+deployment.apps/nginx-deployment created
+```
+Visualize the deployments.
+
+```shell
 $ kubectl get deployments
-NAME     DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-nginx   3         3         3            1           4s
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   3/3     3            3           14s
+```
+Visualize the replica sets.
+
+```shell
+$ kubectl get replicasets
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-75bc85768f   3         3         3       2m9s
+```
+Let's update the nginx Pods to use the `nginx:1.9.1` image instead of the `nginx:1.7.9` image.
+
+```shell
+$ kubectl set image deployment nginx-deployment nginx=nginx:1.9.1 --record
+deployment.extensions/nginx-deployment image updated
 ```
 
-Set the new image and check the revision history.
+Verify the deployment has been rolled out successfully:
 
 ```shell
-$ kubectl set image deployment nginx nginx=nginx:1.18
-deployment.extensions/nginx image updated
+$ kubectl rollout status deployment nginx-deployment
+deployment "nginx-deployment" successfully rolled out
+```
+And that a new replica set has been generated:
 
-$ kubectl rollout history deployment nginx
-deployment.extensions/nginx
+```shell
+$ kubectl get replicasets
+NAME                          DESIRED   CURRENT   READY   AGE
+nginx-deployment-75bc85768f   0         0         0       5m
+nginx-deployment-7d6c755c58   3         3         3       86s
+```
+
+Make a new deployment update by setting the container image to `nginx:1.91` instead of `nginx:1.9.1`. Verify the deployment gets stuck and it cannot move forward.
+
+```shell
+$ kubectl set image deployment nginx-deployment nginx=nginx:1.91 --record
+deployment.extensions/nginx-deployment image updated
+```
+
+```shell
+$ kubectl rollout status deployment nginx-deployment
+Waiting for deployment "nginx-deployment" rollout to finish: 1 out of 3 new replicas have been updated...
+```
+As you can see the deployment cannot move forward so press Ctrl+C to cancel the **monitoring** of the deployment (this will not cancel the deployment).
+
+Have a look at the Deployment rollout history.
+
+```shell
+$ kubectl rollout history deployment nginx-deployment
+deployment.extensions/nginx-deployment
 REVISION  CHANGE-CAUSE
 1         <none>
-2         <none>
+2         kubectl set image deployment nginx-deployment nginx=nginx:1.9.1 --kubeconfig=/var/snap/microk8s/1120/credentials/client.config --record=true
+3         kubectl set image deployment nginx-deployment nginx=nginx:1.91 --kubeconfig=/var/snap/microk8s/1120/credentials/client.config --record=true
 ```
 
-Find details about revision #2
+Find more details about revision #2
 
 ```shell
-$ kubectl rollout history deployment nginx --revision=2
-deployment.extensions/nginx with revision #2
+$ kubectl rollout history deployment nginx-deployment --revision=2
+deployment.extensions/nginx-deployment with revision #2
 Pod Template:
-  Labels:       pod-template-hash=6d58f7664f
-        run=nginx
+  Labels:       pod-template-hash=7d6c755c58
+        run=nginx-deployment
+  Annotations:  kubernetes.io/change-cause:
+          kubectl set image deployment nginx-deployment nginx=nginx:1.9.1 --kubeconfig=/var/snap/microk8s/1120/credentials/client.config --record=tr...
   Containers:
    nginx:
-    Image:      nginx:1.18
+    Image:      nginx:1.9.1
     Port:       80/TCP
     Host Port:  0/TCP
     Environment:        <none>
     Mounts:     <none>
   Volumes:      <none>
+```
+
+Revert the Deployment to revision 2.
+
+```shell
+$ kubectl rollout undo deployment nginx-deployment --to-revision=2
+deployment.extensions/nginx-deployment
+REVISION  CHANGE-CAUSE
+1         <none>
+3         kubectl set image deployment nginx-deployment nginx=nginx:1.91 --kubeconfig=/var/snap/microk8s/1120/credentials/client.config --record=true
+4         kubectl set image deployment nginx-deployment nginx=nginx:1.9.1 --kubeconfig=/var/snap/microk8s/1120/credentials/client.config --record=true
+```
+
+To find out more about the details of the rollout, use `kubectl describe`:
+
+```shell
+$ kubectl describe deployment nginx-deployment
+Name:                   nginx-deployment
+Namespace:              default
+CreationTimestamp:      Tue, 21 Jul 2020 07:37:28 +0000
+Labels:                 run=nginx-deployment
+Annotations:            deployment.kubernetes.io/revision: 4
+                        kubectl.kubernetes.io/last-applied-configuration:
+                          {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"creationTimestamp":null,"labels":{"run":"nginx-deployment"},"nam...
+                        kubernetes.io/change-cause:
+                          kubectl set image deployment nginx-deployment nginx=nginx:1.9.1 --kubeconfig=/var/snap/microk8s/1120/credentials/client.config --record=tr...
+Selector:               run=nginx-deployment
+Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  run=nginx-deployment
+  Containers:
+   nginx:
+    Image:        nginx:1.9.1
+    Port:         80/TCP
+    Host Port:    0/TCP
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   nginx-deployment-7d6c755c58 (3/3 replicas created)
+Events:
+  Type    Reason             Age    From                   Message
+  ----    ------             ----   ----                   -------
+  Normal  ScalingReplicaSet  4m7s   deployment-controller  Scaled up replica set nginx-deployment-75bc85768f to 3
+  Normal  ScalingReplicaSet  3m54s  deployment-controller  Scaled up replica set nginx-deployment-7d6c755c58 to 1
+  Normal  ScalingReplicaSet  3m53s  deployment-controller  Scaled down replica set nginx-deployment-75bc85768f to 2
+  Normal  ScalingReplicaSet  3m53s  deployment-controller  Scaled up replica set nginx-deployment-7d6c755c58 to 2
+  Normal  ScalingReplicaSet  3m52s  deployment-controller  Scaled down replica set nginx-deployment-75bc85768f to 1
+  Normal  ScalingReplicaSet  3m52s  deployment-controller  Scaled up replica set nginx-deployment-7d6c755c58 to 3
+  Normal  ScalingReplicaSet  3m51s  deployment-controller  Scaled down replica set nginx-deployment-75bc85768f to 0
+  Normal  ScalingReplicaSet  3m32s  deployment-controller  Scaled up replica set nginx-deployment-67bdd98d96 to 1
+  Normal  ScalingReplicaSet  69s    deployment-controller  Scaled down replica set nginx-deployment-67bdd98d96 to 0
 ```
 
 Now scale the Deployment to 5 replicas.
 
 ```shell
-$ kubectl scale deployment nginx --replicas=5
-deployment.extensions/nginx scaled
+$ kubectl scale deployment nginx-deployment --replicas=5
+deployment.extensions/nginx-deployment scaled
 ```
 
-Roll back to revision 1. You will see the new revision. Inspecting the revision should show the image `nginx`.
+Pause the deployment and then update the image of the deployment to `nginx:1.9.1`. Verify no new deployment has been triggered.
 
 ```shell
-$ kubectl rollout undo deployment nginx --to-revision=1
-deployment.extensions/nginx
+$ kubectl rollout pause deployment nginx-deployment
+deployment.extensions/nginx-deployment paused
+```
 
-$ kubectl rollout history deployment nginx
-deployment.extensions/nginx
-REVISION  CHANGE-CAUSE
-2         <none>
-3         <none>
+```shell
+$ kubectl set image deployment nginx-deployment nginx=nginx:1.91 --record
+deployment.extensions/nginx-deployment image updated
+```
 
-$ kubectl rollout history deployment nginx --revision=3
-deployment.extensions/nginx with revision #3
-Pod Template:
-  Labels:       pod-template-hash=6cdc894c7c
-        run=nginx
-  Containers:
-   nginx:
-    Image:      nginx:1.17.9
-    Port:       80/TCP
-    Host Port:  0/TCP
-    Environment:        <none>
-    Mounts:     <none>
-  Volumes:      <none>
+Resume the deployment and verify a new ReplicaSet has been created with the previous changes.
+
+```shell
+$ kubectl rollout resume deployment nginx-deployment
+deployment.extensions/nginx-deployment resumed
 ```
 
 ## Optional
