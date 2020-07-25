@@ -3,29 +3,29 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    run: hello
-  name: hello
+    run: hello-deployment
+  name: hello-deployment
 spec:
   replicas: 3
   selector:
     matchLabels:
-      run: hello
+      run: hello-deployment
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        run: hello
+        run: hello-deployment
     spec:
       containers:
-      - image: felipecruz/nodejs-hello-world:1.0.0
-        name: hello
+      - image: localhost:32000/nodejs-hello-world:1.0.0
+        name: hello-deployment
         ports:
         - containerPort: 3000
         env:
           - name: POD_NAME
             valueFrom:
               fieldRef:
-                fieldPath: metadata.name        
+                fieldPath: metadata.name
         resources: {}
 status: {}
