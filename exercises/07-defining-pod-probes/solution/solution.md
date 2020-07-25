@@ -19,7 +19,7 @@ Create the intial YAML with the following command.
 $ kubectl run hello --image=localhost:32000/nodejs-hello-world:1.0.0 --restart=Never --port=3000 -o yaml --dry-run > pod.yaml
 ```
 
-Edit the YAML file and add the probes.
+Edit the YAML file and add the probes. **Make sure to remove the `restartPolicy: Never` that was generated autommatically in the yaml file when running the previous imperative command. Otherwise, the liveness probe will not be able to restart the Pod.**
 
 ```yaml
 apiVersion: v1
@@ -49,6 +49,5 @@ spec:
       periodSeconds: 8
     resources: {}
   dnsPolicy: ClusterFirst
-  restartPolicy: Never
 status: {}
 ```
