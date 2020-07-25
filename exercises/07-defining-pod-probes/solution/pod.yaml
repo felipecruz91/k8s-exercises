@@ -18,5 +18,4 @@ spec:
             fieldPath: metadata.name
     resources: {}
   dnsPolicy: ClusterFirst
-  restartPolicy: Never
 status: {}
