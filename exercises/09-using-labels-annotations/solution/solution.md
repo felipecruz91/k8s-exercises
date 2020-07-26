@@ -75,29 +75,22 @@ The `grep` command can help with rendering any YAML code around the identified s
 
 ```shell
 $ kubectl get pods -o yaml | grep -C 3 'annotations:'
+```
+
+```yaml
 - apiVersion: v1
   kind: Pod
   metadata:
     annotations:
-      cni.projectcalico.org/podIP: 192.168.60.163/32
-      contact: Mary Harris
-    creationTimestamp: 2019-05-10T17:57:38Z
---
---
-- apiVersion: v1
-  kind: Pod
-  metadata:
-    annotations:
-      cni.projectcalico.org/podIP: 192.168.60.147/32
-    creationTimestamp: 2019-05-10T17:58:11Z
+      contact: Marry Harris
+    creationTimestamp: "2020-07-26T17:22:02Z"
     labels:
 --
---
 - apiVersion: v1
   kind: Pod
   metadata:
     annotations:
-      cni.projectcalico.org/podIP: 192.168.60.159/32
-      commit: 2d3mg3
-      contact: John Doe
+      contact: John Doe,commit=2d3mg3
+    creationTimestamp: "2020-07-26T17:16:18Z"
+    labels:
 ```
