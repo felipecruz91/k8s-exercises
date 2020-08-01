@@ -4,7 +4,7 @@ In this exercise, you will create a PersistentVolume, connect it to a Persistent
 
 ## 1. Defining and Mounting a PersistentVolume
 
-1. Create a directory in your host where to persist the data, i.e: `/tmp/config`. Give permissions with `chmod 777 /tmp/config`.
+1. Create a directory in your host where to persist the data, i.e: `/tmp/config`.
 2. Create a Persistent Volume named `pv`, access mode `ReadWriteMany`, storage class name `shared`, 512MB of storage capacity and the host path `/tmp/config`.
 3. Create a Persistent Volume Claim named `pvc` that requests the Persistent Volume in step 2. The claim should request 256MB. Ensure that the Persistent Volume Claim is properly bound after its creation.
 4. Mount the Persistent Volume Claim from a new Pod named `app` with the path `/data/app/config`. The Pod uses the image `nginx`.
